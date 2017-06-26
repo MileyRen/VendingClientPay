@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/b2"
+    android:orientation="vertical"
+    android:configChanges="orientation|keyboardHidden|screenSize"
+    android:clickable="false"
+    android:theme="@style/FullscreenTheme"
+    >
+
+    <!--这个是用来显示二维码-->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:gravity="left"
+        >
+
+        <ImageView
+            android:contentDescription="@string/app_name"
+            android:layout_width="120pt"
+            android:layout_height="120pt"
+            android:layout_marginTop="150dp"
+            android:id="@+id/imageView"
+            />
+        <TextView
+            android:id="@+id/wxtxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="190dp"
+            android:text="打开微信扫一扫"
+            android:textColor="#7ec31a"
+            android:textSize="12pt"
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right"
+        >
+        <TextView
+            android:id="@+id/zfbtxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:text="打开支付宝扫一扫"
+            android:textColor="#27aae2"
+            android:textSize="12pt"
+            />
+        <ImageView
+            android:contentDescription="@string/app_name"
+            android:layout_marginTop="30dp"
+            android:layout_width="120pt"
+            android:layout_height="120pt"
+            android:id="@+id/imageView2"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50pt"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/txttime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="#fe7902"
+            android:textSize="16pt"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

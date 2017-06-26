@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">whole</string>
+    <string name="top_label">煦荣自动售货机</string>
+
+    <string name="title_activity_error">ErrorActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>

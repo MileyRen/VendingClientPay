@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/b2"
+    android:orientation="vertical"
+    android:configChanges="orientation|keyboardHidden|screenSize"
+    android:clickable="false"
+    android:theme="@style/FullscreenTheme"
+    >
+    <!--这个是用来显示二维码-->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_height="100pt"
+        android:gravity="left"
+        android:layout_marginTop="60pt">
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="100pt"
+            android:layout_height="100pt"
+            android:contentDescription="@string/app_name"
+            android:cropToPadding="false" />
+
+        <TextView
+            android:id="@+id/wxtxt"
+            android:layout_width="match_parent"
+            android:text="打开微信扫一扫"
+            android:textColor="#7ec31a"
+            android:textSize="10pt"
+            android:layout_height="69dp"
+            android:layout_marginTop="10pt" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:layout_height="100pt"
+        android:gravity="right">
+        <TextView
+            android:id="@+id/zfbtxt"
+            android:layout_width="186dp"
+            android:text="打开支付宝扫一扫"
+            android:textColor="#27aae2"
+            android:textSize="10pt"
+            android:layout_height="78dp"
+            android:layout_marginTop="10pt" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="100pt"
+            android:layout_height="100pt"
+            android:contentDescription="@string/app_name" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:layout_height="100pt"
+        android:gravity="left">
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_height="100pt"
+            android:contentDescription="@string/app_name"
+            android:layout_width="100pt" />
+        <TextView
+            android:id="@+id/ylzftxt"
+            android:layout_width="match_parent"
+            android:layout_height="79dp"
+            android:text="打开银联扫一扫"
+            android:textColor="#940206"
+            android:textSize="10pt"
+            android:layout_marginTop="10pt" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="15pt"
+        android:gravity="center"
+        android:layout_marginTop="3pt">
+        <TextView
+            android:id="@+id/txttime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fe7902"
+            android:textSize="12pt" />
+    </LinearLayout>
+</LinearLayout>
