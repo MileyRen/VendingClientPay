@@ -56,6 +56,7 @@ import fridayqun.com.myapplication.pay_protocol.PayRequestData;
 import fridayqun.com.myapplication.pay_protocol.QueryOrderData;
 import fridayqun.com.myapplication.serialImp.SerialControl;
 import fridayqun.com.myapplication.serviceutil.ComService;
+import fridayqun.com.myapplication.unionPay.UnionPayConfig;
 import fridayqun.com.myapplication.unionPay.UnionPayService;
 
 /**
@@ -247,7 +248,7 @@ public class WindowUtils {
                 //得到Ip地址
                 MyLog.d(TAG, "It has the Connection");
                 String Ip = GetIpAddress.getIPAddress(true);
-                //UnionPay tradeNo
+                //UnionPay tradeNo商户订单号，不能含“-”或“_
                 String unionPay_tradeNo = '5' + MyDate.outTrantime() + RandomStringGenerator.getRandomIntegerByLength(5);
 
                 //wechat tradeNo
@@ -308,8 +309,11 @@ public class WindowUtils {
                 }
 
                 //UnionPay Response
-                String unionPayTime = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date(System.currentTimeMillis()));
-                String UnionPayResponse = UnionPayService.getUnionPayRes(unionPay_tradeNo, Integer.toString(price), unionPayTime);
+                long currentTime = System.currentTimeMillis();
+                SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//24小时制
+                String unionPayTime =df.format(new Date(currentTime));//订单发送时间
+                String payTimeout = df.format(new Date(currentTime+ UnionPayConfig.timeOut));//超时时间
+                String UnionPayResponse = UnionPayService.getUnionPayRes(unionPay_tradeNo, Integer.toString(price), unionPayTime,payTimeout);
                 //UnionPay qrCode
                 String union_code = null;
                 try {
@@ -402,7 +406,7 @@ public class WindowUtils {
                     }
                     try {
                         if (("00").equals(respCode)) {
-                            //查询交易成功
+                            //respCode=="00" 同时交易号相同查询交易成功
                             if (origRespCode.equals("00")) {
                                 MyLog.d(TAG, "查询银联交易成功.");
                                 //得到最后要发送的串口号

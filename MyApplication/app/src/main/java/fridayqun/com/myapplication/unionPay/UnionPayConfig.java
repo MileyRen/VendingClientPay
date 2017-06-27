@@ -20,14 +20,17 @@ public class UnionPayConfig {
     public static final String accessType = "0";        //接入类型，商户接入填0 ，不需修改（0：直连商户， 1： 收单机构 2：平台商户）
     public static final String currencyCode = "156";    //境内商户固定 156 人民币
 
-    /**以下为测试数据**/
+    /**以下为真实数据**/
     public static final String merId = "301310053310155"; //商户号码，请改成自己申请的商户号或者open上注册得来的777商户号测试
-    //public static final String txnTime = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date(System.currentTimeMillis()));//订单发送时间，取系统时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
+    public static final String termId = "NO1125";//终端号，可以没有
+    //public static final String payTimeOut ="";//支付超时时间
+    //public static final String txnTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(System.currentTimeMillis()));//订单发送时间，取系统时间，格式为yyyyMMddHHmmss，必须取当前时间，否则会报txnTime无效
     //public static final String orderId = txnTime;//商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则
     public static final String txnAmt = "120";             //交易金额 单位为分，不能带小数点
     public static final String backUrl = "http://222.222.222.222:8080/ACPSample_AppServer/backRcvResponse"; //交易通知地址
+    public static int timeOut = 2 * 60000;//超时时间2分钟
 
-    public static final String UnionPayLocalIp = "172.30.214.78";
+    public static final String UnionPayLocalIp = "172.30.214.78";//"172.29.187.30";//"49.52.10.180";
     public static final String UnionPayLocalPort = "8080";
     public static final String UnionPayLocalUrl = "http://" + UnionPayLocalIp + ":" + UnionPayLocalPort + "/ACPSample_AppServer/form05_6_1_ApplyQrCode";
     public static final String UnionPayQueryUrl = "http://" + UnionPayLocalIp + ":" + UnionPayLocalPort + "/ACPSample_AppServer/form05_6_3_Query";
