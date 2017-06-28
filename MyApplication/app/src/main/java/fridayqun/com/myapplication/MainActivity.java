@@ -33,6 +33,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     private static Intent intentService;
     private BroadcastReceiver detachReceiver;
     private BroadcastReceiver attachReceiver;
+    public static Context FULL_CONTEXT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE
         );
-
+        FULL_CONTEXT = MainActivity.this;
         toggleHideyBar();
         setContentView(R.layout.activity_main);
 

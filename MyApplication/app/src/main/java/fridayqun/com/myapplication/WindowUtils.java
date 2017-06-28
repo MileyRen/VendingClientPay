@@ -11,13 +11,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +38,8 @@ import java.util.TimerTask;
 import javax.xml.parsers.ParserConfigurationException;
 
 import fridayqun.com.myapplication.HttpsUtil.AlipayHttpsUtil;
+import fridayqun.com.myapplication.UnionPayService.UnionPayConfig;
+import fridayqun.com.myapplication.UnionPayService.UnionServiceInterface;
 import fridayqun.com.myapplication.common.Configure;
 import fridayqun.com.myapplication.common.Create2DCode;
 import fridayqun.com.myapplication.common.GetIpAddress;
@@ -56,8 +56,7 @@ import fridayqun.com.myapplication.pay_protocol.PayRequestData;
 import fridayqun.com.myapplication.pay_protocol.QueryOrderData;
 import fridayqun.com.myapplication.serialImp.SerialControl;
 import fridayqun.com.myapplication.serviceutil.ComService;
-import fridayqun.com.myapplication.unionPay.UnionPayConfig;
-import fridayqun.com.myapplication.unionPay.UnionPayService;
+import static fridayqun.com.myapplication.common.MessageConfig.*;
 
 /**
  * Created by lenovo on 2016/6/6.
@@ -135,7 +134,7 @@ public class WindowUtils {
                 t__.cancel();
                 Message message = new Message();
                 //1代表超时
-                message.what = 1;
+                message.what = TIME_OUT_MSG;
                 myHandler.sendMessage(message);
                 hidePopupWindow();
             }
@@ -146,7 +145,7 @@ public class WindowUtils {
 
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == 1) {
+            if (msg.what == TIME_OUT_MSG) {
                 Toast toast = Toast.makeText(mContext, "超时", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
@@ -155,7 +154,7 @@ public class WindowUtils {
                 t__.cancel();
                 hidePopupWindow();
             }
-            if (msg.what == 2) {
+            if (msg.what == WECHAT_PAY_SUCCESS) {
                 Toast toast = Toast.makeText(mContext, "微信支付成功", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
@@ -166,7 +165,7 @@ public class WindowUtils {
                 t__.cancel();
                 hidePopupWindow();
             }
-            if (msg.what == 3) {
+            if (msg.what == ALIPAY_SUCCESS) {
                 Toast toast = Toast.makeText(mContext, "支付宝支付成功", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
@@ -176,7 +175,7 @@ public class WindowUtils {
                 t__.cancel();
                 hidePopupWindow();
             }
-            if (msg.what == 4) {
+            if (msg.what == UNION_PAY_SUCCESS) {
                 Toast toast = Toast.makeText(mContext, "银联支付成功", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
@@ -186,27 +185,22 @@ public class WindowUtils {
                 t__.cancel();
                 hidePopupWindow();
             }
-            if (msg.what == 5) {
+            if (msg.what == QUERY_FAILE) {
                 Toast toast = Toast.makeText(mContext, "查询失败", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 SerialControl.hasChoosen = false;
                 toast.show();
             }
             //得到了6这个消息，要取消。
-            if (msg.what == 6) {
+            if (msg.what == CANCEL_MSG) {
                 Toast toast = Toast.makeText(mContext, "取消", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 //toast.show();
                 t__.cancel();
                 hidePopupWindow();
             }
-            if (msg.what == 7) {
+            if (msg.what == NETWORK_ERROR) {
                 Toast toast = Toast.makeText(mContext, "没有联网", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            }
-            if (msg.what == 8) {
-                Toast toast = Toast.makeText(mContext, "银联交易失败", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
             }
@@ -234,7 +228,7 @@ public class WindowUtils {
                     String aa = bundle.getString("message");
                     if ("6".equals(aa)) {
                         Message mm = new Message();
-                        mm.what = 6;
+                        mm.what = CANCEL_MSG;
                         myHandler.sendMessage(mm);
                     }
                 }
@@ -250,7 +244,6 @@ public class WindowUtils {
                 String Ip = GetIpAddress.getIPAddress(true);
                 //UnionPay tradeNo商户订单号，不能含“-”或“_
                 String unionPay_tradeNo = '5' + MyDate.outTrantime() + RandomStringGenerator.getRandomIntegerByLength(5);
-
                 //wechat tradeNo
                 String my_outTradeNo = '8' + MyDate.outTrantime() + RandomStringGenerator.getRandomIntegerByLength(5);
                 //alipay tradeNo
@@ -270,7 +263,7 @@ public class WindowUtils {
                 } catch (IOException e) {
                     MyLog.d(TAG, "connect fail!");
                     Message mm = new Message();
-                    mm.what = 5;
+                    mm.what = QUERY_FAILE;
                     myHandler.sendMessage(mm);
                 }
                 //wechat创建预支付订单，并获得返回值xml
@@ -280,7 +273,7 @@ public class WindowUtils {
                 } catch (IOException e) {
                     MyLog.d(TAG, "connect fail!");
                     Message mm = new Message();
-                    mm.what = 5;
+                    mm.what = QUERY_FAILE;
                     myHandler.sendMessage(mm);
                 }
 
@@ -308,27 +301,17 @@ public class WindowUtils {
                     MyLog.d(TAG, "SAXException");
                 }
 
-                //UnionPay Response
+                //UnionPay union_code
                 long currentTime = System.currentTimeMillis();
                 SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//24小时制
                 String unionPayTime =df.format(new Date(currentTime));//订单发送时间
-                String payTimeout = df.format(new Date(currentTime+ UnionPayConfig.timeOut));//超时时间
-                String UnionPayResponse = UnionPayService.getUnionPayRes(unionPay_tradeNo, Integer.toString(price), unionPayTime,payTimeout);
-                //UnionPay qrCode
-                String union_code = null;
-                try {
-                    JSONObject jsonObject = new JSONObject(UnionPayResponse);
-                    if (jsonObject.get("respCode").equals("00") || jsonObject.get("respMsg").equals("成功[0000000]")) {
-                        Log.d(TAG, "银联二维码加载成功");
-                        union_code = (String) jsonObject.get("qrCode");
-                    } else {
-                        union_code = "Request Error;";
-                    }
-                } catch (JSONException e) {
-                    Log.d(TAG, "银联二维码加载失败");
-                    union_code = "Request Error;";
-                }
+                String payTimeout = df.format(new Date(currentTime+ UnionPayConfig.UNION_TIMEOUT));//超时时间
 
+                String union_code= null;
+                union_code = UnionServiceInterface.getQr_Code(unionPay_tradeNo,Integer.toString(price),unionPayTime,payTimeout);
+                if(TextUtils.isEmpty(union_code)){
+                    union_code="Resuest Error!";
+                }
                 //微信
                 Object code_url = temp.get("code_url");
                 String tt = code_url.toString();
@@ -350,20 +333,20 @@ public class WindowUtils {
                     QueryOrderData queryOrderData = new QueryOrderData(my_outTradeNo);
                     String query_alipay = "";
                     String query_xml = "";
-                    String query_union = "";
+                    String origRespCode= "";
                     if (isNetworkConnected(mContext)) {
                         try {
                             query_xml = HttpsUtil.sendPost(Configure.Queryorder_API, queryOrderData);
                         } catch (IOException e) {
                             MyLog.d(TAG, "connect fail!");
                             Message mm = new Message();
-                            mm.what = 5;
+                            mm.what = QUERY_FAILE;
                             myHandler.sendMessage(mm);
                         }
                     } else {
                         MyLog.d(TAG, "connect lose");
                         Message mm = new Message();
-                        mm.what = 5;
+                        mm.what = QUERY_FAILE;
                         myHandler.sendMessage(mm);
                     }
                     if (isNetworkConnected(mContext)) {
@@ -372,57 +355,43 @@ public class WindowUtils {
                             query_alipay = AlipayHttpsUtil.AlipayHttps(QueryTrade.getQueryTradeString(Alipay_my_outTradeNo));
                         } catch (IOException e) {
                             Message mm = new Message();
-                            mm.what = 5;
+                            mm.what = QUERY_FAILE;
                             myHandler.sendMessage(mm);
                         }
                     } else {
                         MyLog.d(TAG, "connect lose");
                     }
-                    /************查询银联交易结果，下面进行判断**************************************/
+                    /************查询银联交易结果*************************************/
                     if (isNetworkConnected(mContext)) {
                         //银联查询
                         try {
-                            query_union = UnionPayService.queryUnionOrder(unionPay_tradeNo, unionPayTime);
+                            origRespCode = UnionServiceInterface.queryUnionOrder(unionPay_tradeNo, unionPayTime);
                         } catch (Exception e) {
                             Message mm = new Message();
-                            mm.what = 5;
+                            mm.what = QUERY_FAILE;
                             myHandler.sendMessage(mm);
                         }
                     } else {
                         MyLog.d(TAG, "connect lose");
                     }
     /************************判断银联交易结果****************************************/
-                    JSONObject queryUnionTrade = null;
-                    String respCode = "";
-                    String origRespCode = "";
-                    MyLog.d(TAG, "Let's see the union query." + query_union);
                     try {
-                        queryUnionTrade = new JSONObject(query_union);
-                        respCode = queryUnionTrade.getString("respCode");
-                        origRespCode = queryUnionTrade.getString("origRespCode");
-                    } catch (JSONException e) {
-                        MyLog.d(TAG, "please");
-                        MyLog.d(TAG, e.getMessage());
-                    }
-                    try {
-                        if (("00").equals(respCode)) {
-                            //respCode=="00" 同时交易号相同查询交易成功
-                            if (origRespCode.equals("00")) {
-                                MyLog.d(TAG, "查询银联交易成功.");
+                        if (!TextUtils.isEmpty(origRespCode)) {
+                            if(origRespCode.equals("00")){
+                                MyLog.d(TAG, "银联交易成功.");
                                 //得到最后要发送的串口号
-                                List<Byte> getRetrunNumber = ConsumeInstructor.getReturnInsult(Alipay_my_outTradeNo.toCharArray(), fee);
+                                List<Byte> getRetrunNumber = ConsumeInstructor.getReturnInsult(unionPay_tradeNo.toCharArray(), fee);
                                 MyLog.d(TAG, getRetrunNumber.toString());
                                 Message mes = new Message();
-                                mes.what = 4;
+                                mes.what = UNION_PAY_SUCCESS;
                                 Bundle mBundle = new Bundle();
                                 mBundle.putByteArray("Info", arraytobyte.arraytobyte(getRetrunNumber));
                                 mes.setData(mBundle);
                                 myHandler.sendMessage(mes);
                                 break;
                             }
-                        }
-                    } catch (Exception e) {
-                        MyLog.d(TAG, "Cannot do this query!! equal.");
+                        }}catch (Exception e){
+                        MyLog.d(TAG,"Cannot do this query!! equal.");
                     }
 /*************************查询银联交易结果结束*************************************************************/
                     //有一种意外情况是交易号不存在
@@ -445,7 +414,7 @@ public class WindowUtils {
                             List<Byte> getRetrunNumber = ConsumeInstructor.getReturnInsult(Alipay_my_outTradeNo.toCharArray(), fee);
                             MyLog.d(TAG, getRetrunNumber.toString());
                             Message message2 = new Message();
-                            message2.what = 3;
+                            message2.what = ALIPAY_SUCCESS;
                             Bundle mBundle = new Bundle();
                             mBundle.putByteArray("Info", arraytobyte.arraytobyte(getRetrunNumber));
                             message2.setData(mBundle);
@@ -485,7 +454,7 @@ public class WindowUtils {
                                         //然后我这边要返回支付成功的信号
                                         //SerialControl.consumeInsult(getRetrunNumber, ComService.getsPort());
                                         Message message1 = new Message();
-                                        message1.what = 2;
+                                        message1.what = WECHAT_PAY_SUCCESS;
                                         Bundle mBundle = new Bundle();
                                         mBundle.putByteArray("Info", arraytobyte.arraytobyte(getRetrunNumber));
                                         message1.setData(mBundle);
@@ -519,13 +488,13 @@ public class WindowUtils {
                 } catch (IOException e) {
                     MyLog.d(TAG, "connect fail!");
                     Message mm = new Message();
-                    mm.what = 5;
+                    mm.what = QUERY_FAILE;
                     myHandler.sendMessage(mm);
                 }
             } else {
                 //没有联网，等待60s后退出，发送Msg.what = 5
                 Message msg = new Message();
-                msg.what = 7;
+                msg.what = NETWORK_ERROR;
                 myHandler.sendMessage(msg);
             }
             //SerialControl.cancelInsult(ComService.getsPort());
